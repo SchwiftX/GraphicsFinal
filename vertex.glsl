@@ -1,28 +1,13 @@
-#version 150 core
+#version 330
 
-in vec3 position;
-in vec3 inNormal;
+layout(location = 0) in vec3 i_position;
+layout(location = 1) in vec3 i_normal;
 
-//in vec3 inColor;
-uniform vec3 inColor;
+uniform mat4 u_mvp_mat; // model-view-projection matrix
 
-//const vec3 inColor = vec3(0.f,0.7f,0.f);
-const vec3 inLightDir = normalize(vec3(-1,-1,-1));
+uniform float u_offset1; // offset along normal
 
-out vec3 Color;
-out vec3 normal;
-out vec3 pos;
-out vec3 lightDir;
-
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 proj;
-
-void main() {
-   Color = inColor;
-   gl_Position = proj * view * model * vec4(position,1.0);
-   pos = (view * model * vec4(position,1.0)).xyz;
-   lightDir = (view * vec4(inLightDir,0.0)).xyz; //It's a vector!
-   vec4 norm4 = transpose(inverse(view*model)) * vec4(inNormal,0.0);
-   normal = normalize(norm4.xyz);
+void main(void){
+    vec4 tPos   = vec4(i_position + i_normal * u_offset1, 1.0);
+    gl_Position    = u_mvp_mat * tPos;
 }
