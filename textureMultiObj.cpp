@@ -299,9 +299,6 @@ int main(int argc, char *argv[]){
 }
 
 void drawGeometry(int texturedShader, int SilouetteShader, int numVerts1, int numVerts2, glm::mat4 proj, glm::mat4 view){
-    
-
-    
     glUseProgram(SilouetteShader);
     GLint uniMVP = glGetUniformLocation(SilouetteShader,"u_mvp_mat");
     glm::mat4 model1;
@@ -331,22 +328,20 @@ void drawGeometry(int texturedShader, int SilouetteShader, int numVerts1, int nu
     glm::vec3 colVec(colR,colG,colB);
     glUniform3fv(uniColor, 1, glm::value_ptr(colVec));
     GLint uniTexID = glGetUniformLocation(texturedShader, "texID");
+	GLint u_numShades = glGetUniformLocation(texturedShader, "u_numShades");
     glm::mat4 model;
     model = glm::rotate(model,3.14f/2,glm::vec3(0.0f, 0.0f, 1.0f));
     //model = glm::rotate(model,timePast * 3.14f/4,glm::vec3(1.0f, 0.0f, 0.0f));
     //model = glm::scale(model,glm::vec3(.2f,.2f,.2f)); //An example of scale
     GLint uniModel = glGetUniformLocation(texturedShader, "model");
     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
-    glUniform1i(uniTexID, 0); //Set texture ID to use (-1 = no texture)
+    glUniform1i(uniTexID, -1); //Set texture ID to use (-1 = no texture)
+	glUniform1f(u_numShades, 0.5); // number of shades
     //SJG: Here we draw only the first object (start at 0, draw numTris1 triangles)
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
     glDepthMask(GL_TRUE);
     glDrawArrays(GL_TRIANGLES, 0, numVerts1); //(Primitive Type, Start Vertex, End Vertex)
-    
-
-
-    
     
 //    //Instancing! Same model (e.g., same draw call), but different parameters
 //    model = glm::mat4();
