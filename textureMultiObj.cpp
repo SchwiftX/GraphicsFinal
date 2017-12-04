@@ -1,4 +1,4 @@
-#include "glad.h"  //Include order can matter here
+#include "glad/glad.h"  //Include order can matter here
 #ifdef __APPLE__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -172,7 +172,7 @@ int main(int argc, char *argv[]){
     //GL_STREAM_DRAW = geom. changes frequently.  This effects which types of GPU memory is used
     
     int texturedShader = InitShader("vertexTex.glsl", "fragmentTex.glsl");
-    int phongShader = InitShader("vertex.glsl", "fragment.glsl");
+    int SilouetteShader = InitShader("vertex.glsl", "fragment.glsl");
     
     
     
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]){
     //Binds to VBO current GL_ARRAY_BUFFER
     glEnableVertexAttribArray(posAttrib);
     
-    //GLint colAttrib = glGetAttribLocation(phongShader, "inColor");
+    //GLint colAttrib = glGetAttribLocation(SilouetteShader, "inColor");
     //glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
     //glEnableVertexAttribArray(colAttrib);
     
@@ -196,11 +196,11 @@ int main(int argc, char *argv[]){
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
     
     
-    GLint sposAttrib = glGetAttribLocation(phongShader,"i_position");
+    GLint sposAttrib = glGetAttribLocation(SilouetteShader,"i_position");
     glVertexAttribPointer(sposAttrib, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), 0);
     glEnableVertexAttribArray(sposAttrib);
     
-    GLint snormalAttrib = glGetAttribLocation(phongShader,"i_normal");
+    GLint snormalAttrib = glGetAttribLocation(SilouetteShader,"i_normal");
     glVertexAttribPointer(snormalAttrib, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(5*sizeof(float)));
     glEnableVertexAttribArray(snormalAttrib);
     
@@ -280,7 +280,7 @@ int main(int argc, char *argv[]){
         glUniform1i(glGetUniformLocation(texturedShader, "tex1"), 1);
         
         glBindVertexArray(vao);
-        drawGeometry(texturedShader,phongShader,numVerts1,numVerts2,proj,view);
+        drawGeometry(texturedShader,SilouetteShader,numVerts1,numVerts2,proj,view);
         
         
         if (saveOutput) Win2PPM(screenWidth,screenHeight);
@@ -289,7 +289,7 @@ int main(int argc, char *argv[]){
     }
     
     //Clean Up
-    glDeleteProgram(phongShader);
+    glDeleteProgram(SilouetteShader);
     glDeleteBuffers(1, vbo);
     glDeleteVertexArrays(1, &vao);
     
@@ -298,7 +298,7 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
-void drawGeometry(int textureShader, int SilouetteShader, int numVerts1, int numVerts2, glm::mat4 proj, glm::mat4 view){
+void drawGeometry(int texturedShader, int SilouetteShader, int numVerts1, int numVerts2, glm::mat4 proj, glm::mat4 view){
     
 
     
@@ -326,16 +326,16 @@ void drawGeometry(int textureShader, int SilouetteShader, int numVerts1, int num
 //        glDepthMask(GL_TRUE);
 //        glDrawArrays(GL_TRIANGLES, 0, numVerts1); //(Primitive Type, Start Vertex, End Vertex)
     
-    glUseProgram(textureShader);
-    GLint uniColor = glGetUniformLocation(textureShader, "inColor");
+    glUseProgram(texturedShader);
+    GLint uniColor = glGetUniformLocation(texturedShader, "inColor");
     glm::vec3 colVec(colR,colG,colB);
     glUniform3fv(uniColor, 1, glm::value_ptr(colVec));
-    GLint uniTexID = glGetUniformLocation(textureShader, "texID");
+    GLint uniTexID = glGetUniformLocation(texturedShader, "texID");
     glm::mat4 model;
     model = glm::rotate(model,3.14f/2,glm::vec3(0.0f, 0.0f, 1.0f));
     //model = glm::rotate(model,timePast * 3.14f/4,glm::vec3(1.0f, 0.0f, 0.0f));
     //model = glm::scale(model,glm::vec3(.2f,.2f,.2f)); //An example of scale
-    GLint uniModel = glGetUniformLocation(textureShader, "model");
+    GLint uniModel = glGetUniformLocation(texturedShader, "model");
     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
     glUniform1i(uniTexID, 0); //Set texture ID to use (-1 = no texture)
     //SJG: Here we draw only the first object (start at 0, draw numTris1 triangles)
