@@ -33,4 +33,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="fragmentTex.glsl">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="fragment.glsl">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="vertex.glsl">
+      <Filter>源文件</Filter>
+    </None>
+    <None Include="vertexTex.glsl">
+      <Filter>源文件</Filter>
+    </None>
+  </ItemGroup>
 </Project>
